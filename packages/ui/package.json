@@ -1,14 +1,23 @@
 {
   "name": "@app/ui",
-  "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "exports": {
+    ".": "./src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "pnpm type-check",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "3.4.21"
+  },
+  "devDependencies": {
+    "vue-tsc": "2.0.13"
+  },
+  "peerDependencies": {
+    "vue": "3.3.12"
+  }
 }
