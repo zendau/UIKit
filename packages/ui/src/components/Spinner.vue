@@ -1,145 +1,31 @@
 <script setup lang="ts">
 import Item from './item.vue'
-import {reactive, ref} from 'vue'
+import {useSpinnerMove} from '../composables/useSpinnerMove'
 
-const container = ref()
-const spinnerData = reactive([1,2,3,4,5,6,7,8,9])
 
-const FLIP_SPEED = ref(10);
-const ITEM_SIZE = 200;
 
-let isAnimation: number = 0;
+const {startMove, startAuto, attenuationSpeed, spinnerData, FLIP_SPEED, container} = useSpinnerMove(200)
 
 function onRightSlide() {
-
-  let counter = 0;
-
-
-  function move() {
-    counter++;
-    if (!container.value) return
-
-    if (counter * FLIP_SPEED.value >= ITEM_SIZE) {
-      counter = 0;
-      const firstItem = spinnerData.shift();
-
-      if (!firstItem) return
-      spinnerData.push(firstItem);
-      cancelAnimationFrame(isAnimation);
-      isAnimation = 0;
-      container.value.style.transform = `translateX(-${counter * FLIP_SPEED.value}px)`;
-      return;
-    }
-    container.value.style.transform = `translateX(-${counter * FLIP_SPEED.value}px)`;
-    isAnimation = requestAnimationFrame(move);
-  }
-
-
-
-  isAnimation = requestAnimationFrame(move);
+  startMove('right')
 }
 
-
 function onLeftSlide() {
-let counter = 0;
+  startMove('left')
+}
 
-function move() {
-    counter++;
-    if (!container.value) return
-
-    if (counter * FLIP_SPEED.value >= ITEM_SIZE) {
-      counter = 0;
-      const lastItem = spinnerData.pop();
-
-      if (!lastItem) return
-      spinnerData.unshift(lastItem);
-      cancelAnimationFrame(isAnimation);
-      isAnimation = 0;
-      container.value.style.transform = `translateX(${counter * FLIP_SPEED.value}px)`;
-      return;
-    }
-    container.value.style.transform = `translateX(${counter * FLIP_SPEED.value}px)`;
-    isAnimation = requestAnimationFrame(move);
-  }
-
-
-isAnimation = requestAnimationFrame(move);
+function onAuto() {
+  startAuto()
 }
 
 function onTimeSlide(e:any) {
   const roundTime = (e.target.children.time.value / 5) * 1000;
   const phaseTime = roundTime / 20;
 
-  let counter = 0;
-  let speed = 100;
 
-  console.log(counter, speed)
-
-  const speedDecayInterval = setInterval(() => {
-    if (!speed) {
-      clearInterval(speedDecayInterval);
-      return;
-    }
-    speed--;
-  }, phaseTime);
-
-  function move() {
-    counter++;
-
-    if (speed === 0) {
-      cancelAnimationFrame(isAnimation);
-      isAnimation = 0;
-      return;
-    }
-
-    if (!container.value) return
-
-    if (counter * FLIP_SPEED.value >= ITEM_SIZE) {
-      counter = 0;
-      const firstItem = spinnerData.shift();
-
-      if (!firstItem) return
-      spinnerData.push(firstItem);
-    }
-    container.value.style.transform = `translateX(-${counter * speed}px)`;
-    isAnimation = requestAnimationFrame(move);
-  }
-
-
-  isAnimation = requestAnimationFrame(move);
-
+  attenuationSpeed(phaseTime)
+  startMove('right', false)
 }
-
-function onAuto() {
-  let counter = 0;
-
-  if (isAnimation) {
-    cancelAnimationFrame(isAnimation);
-    isAnimation = 0
-    return;
-  }
-
-  function move() {
-    counter++;
-    if (!container.value) return
-
-    if (counter * FLIP_SPEED.value >= ITEM_SIZE) {
-      counter = 0;
-      const firstItem = spinnerData.shift();
-
-      if (!firstItem) return
-      spinnerData.push(firstItem);
-    }
-    container.value.style.transform = `translateX(-${counter * FLIP_SPEED.value}px)`;
-    isAnimation = requestAnimationFrame(move);
-  }
-
-
-  isAnimation = requestAnimationFrame(move);
-
-}
-
-
 
 </script>
 
