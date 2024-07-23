@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Item from './item.vue'
 import {useSpinnerMove} from '../composables/useSpinnerMove'
-
+import TimeForm from './spinner/timeForm.vue';
 
 
 const {startMove, startAuto, attenuationSpeed, spinnerData, FLIP_SPEED, container} = useSpinnerMove(200)
@@ -18,8 +18,8 @@ function onAuto() {
   startAuto()
 }
 
-function onTimeSlide(e:any) {
-  const roundTime = (e.target.children.time.value / 5) * 1000;
+function onTimeSlide(time: number) {
+  const roundTime = time / 5 * 1000;
   const phaseTime = roundTime / 20;
 
 
@@ -33,7 +33,6 @@ function onTimeSlide(e:any) {
   <div class="container" >
     <ul class="spinner-container" ref="container">
       <Item v-for="item of spinnerData" :key="item" :title="item" />
-
     </ul>
   </div>
 
@@ -43,19 +42,12 @@ function onTimeSlide(e:any) {
     <button @click="onRightSlide">right</button>
   </div>
 
-
   <div>
+    <label for="speed">Скорость вращения</label>
     <input id='speed' v-model="FLIP_SPEED" type="range" min="1" max="100" value="1">
   </div>
 
-  <form @submit.prevent="onTimeSlide">
-    <label for="time">Секунды</label>
-    <input name="time" id="time" type="number" required value="10">
-
-    <input type="reset">
-    <button type="submit">Запустить</button>
-  </form>
-
+  <TimeForm @timeSlideSumbit="onTimeSlide" />
 </template>
 
 <style>
@@ -99,7 +91,7 @@ function onTimeSlide(e:any) {
 
     .btn-container button {
       width: 100px;
-      height: 40px;
+      height: 100%;
       margin: 10px;
       font-size: 20px;
     }
